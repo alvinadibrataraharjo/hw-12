@@ -1,13 +1,27 @@
-
 import * as React from 'react';
+import './App.css'
+import { Box } from '@chakra-ui/react'
+import { Container } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
 
 function Board() {
-  const squares = Array(9).fill(null);
-  function selectSquare(square) {
+  const [squares, setSquares] = React.useState(Array(9).fill(null));
+  const [xIsNext, setXIsNext] = React.useState(true);
 
+  function selectSquare(square) {
+    if (calculateWinner(squares) || squares[square]) {
+      return;
+    }
+
+    const newSquares = squares.slice();
+    newSquares[square] = xIsNext ? 'X' : 'O';
+    setSquares(newSquares);
+    setXIsNext(!xIsNext);
   }
 
   function restart() {
+    setSquares(Array(9).fill(null));
+    setXIsNext(true);
   }
 
   function renderSquare(i) {
@@ -18,28 +32,34 @@ function Board() {
     );
   }
 
+  const winner = calculateWinner(squares);
+  const nextValue = calculateNextValue(squares);
+  const status = calculateStatus(winner, squares, nextValue);
+
   return (
-    <div>
-      <div >STATUS</div>
-      <div >
+    <Container centerContent>
+    <Box>
+      <Box>{status}</Box>
+      <Box className='board-row'>
         {renderSquare(0)}
         {renderSquare(1)}
         {renderSquare(2)}
-      </div>
-      <div >
+      </Box>
+      <Box className='board-row'>
         {renderSquare(3)}
         {renderSquare(4)}
         {renderSquare(5)}
-      </div>
-      <div >
+      </Box>
+      <Box className='board-row'>
         {renderSquare(6)}
         {renderSquare(7)}
         {renderSquare(8)}
-      </div>
-      <button onClick={restart}>
-        restart
-      </button>
-    </div>
+      </Box>
+      <Button>
+        <button onClick={restart}>restart</button>
+      </Button>
+    </Box>
+    </Container>
   );
 }
 
